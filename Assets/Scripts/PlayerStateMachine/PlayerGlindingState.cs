@@ -1,0 +1,86 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+public class PlayerGlindingState : PlayerBaseState
+{
+    public PlayerGlindingState(PlayerStateMachine currentContex, PlayerStateFactory playerStateFactory) : base(currentContex, playerStateFactory) { }
+    public override void EnterState()
+    {
+        _ctx._animatorController.SetBool(_ctx._isGlidingParameter, true);
+        _ctx._animatorController.SetBool(_ctx._isGroundedParameter, false);
+        _ctx._animatorController.SetBool(_ctx._isClimbingParameter, false);
+        _ctx._playervelocity.y = 0;
+        _ctx._gravityValue = _ctx._GlideGravity;
+        _ctx.UnpackParaglider();
+        _ctx._canClimb = false;
+    }
+    public override void UpdateState() { CheckSwitchState(); BasicMovement(); }
+    public override void ExitState() { _ctx.PackParaglider(); }
+    public override void CheckSwitchState()
+    {
+        if (_ctx._canClimb && _ctx._Player.Stamina > 0)
+        {
+            SwitchState(_factory.Climb());
+        }
+        if (_ctx._controller.isGrounded)
+        {
+            _ctx._gravityValue = -9.8f;
+            SwitchState(_factory.Grounded());
+        }
+        if (_ctx._playerInputMap.actions["Jump"].WasPressedThisFrame())
+        {
+            _ctx._gravityValue = -9.8f;
+            SwitchState(_factory.Jump());
+        }
+        if (!_ctx._canGlide)
+        {
+            _ctx._gravityValue = -9.8f;
+            SwitchState(_factory.Jump());
+        }
+        if (_ctx._Player.Stamina <= 1)
+        {
+            _ctx._gravityValue = -9.8f;
+            SwitchState(_factory.Jump());
+        }
+    }
+    public override void InitializeSubState() { }
+    private void BasicMovement()
+    {
+        StaminaDecreasing();
+        WallDetection();
+        // Manage player input
+        Vector3 _movemenInput3D = new Vector3(_ctx._movemenInput.x, 0, _ctx._movemenInput.y);
+        Vector3 _movemenInputWorldSpace = Quaternion.Euler(0, _ctx._followCamera.transform.eulerAngles.y, 0) * _movemenInput3D;
+        Vector3 movementDirection = _movemenInputWorldSpace;
+
+        // Rotate player towards movement direction
+        if (movementDirection != Vector3.zero)
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
+            _ctx.transform.rotation = Quaternion.Slerp(_ctx.transform.rotation, desiredRotation, _ctx._rotationSpeed * Time.deltaTime);
+        }
+        _ctx._controller.Move(movementDirection * _ctx._sprintSpeed * 1.5f * Time.deltaTime);
+    }
+    private void StaminaDecreasing()
+    {
+        _ctx._staminaContainer.SetActive(true);
+        if (_ctx._Player.Stamina > 0) _ctx._Player.Stamina -= _ctx._staminaDecrease / 3 * Time.deltaTime;
+    }
+    private void WallDetection()
+    {
+        RaycastHit hit;
+        Vector3 rayOrigin = _ctx.transform.position + _ctx.transform.TransformVector(_ctx._climbOffset);
+        Vector3 rayDirection = _ctx.transform.forward;
+
+        if (Physics.Raycast(rayOrigin, rayDirection, out hit, _ctx._raycastClimDistance))
+        {
+            _ctx._canClimb = true;
+        }
+        else
+        {
+            _ctx._canClimb = false;
+        }
+
+        Debug.DrawRay(rayOrigin, rayDirection * (hit.distance == 0 ? _ctx._raycastClimDistance : hit.distance), Color.red);
+    }
+}

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af072bbf88c7b1d4f991688ebd006b9a, type: 3}
+  m_Name: Bokobling
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  timeBetweenAttacks: 5
+  damagePlayer: 10
+  Trusth: 25
+  RewardCuantity: 5
+  WalkPointRange: 0
+  SigthRange: 9
+  AttacRange: 3
+  PrefabReward: {fileID: 5202124587367424998, guid: 764d4a6b408083a49bcb0aac8972241d, type: 3}
