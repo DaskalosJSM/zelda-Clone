@@ -1,0 +1,17 @@
+.Button {
+    margin-bottom: 2%;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgb(96, 18, 18);
+    border-right-color: rgb(96, 18, 18);
+    border-top-color: rgb(96, 18, 18);
+    border-bottom-color: rgb(96, 18, 18);
+    background-color: rgba(238, 210, 93, 0.43);
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    -unity-font: url('project://database/Assets/UI%20Toolkit/The%20Wild%20Breath%20of%20Zelda.ttf?fileID=12800000&guid=274101c409c202248b739698557c2449&type=3#The Wild Breath of Zelda');
+    -unity-font-definition: initial;
+    font-size: 130%;
+}
